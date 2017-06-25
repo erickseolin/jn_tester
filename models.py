@@ -1,3 +1,5 @@
+import dill as pickle
+
 # Assert types
 ASSERT_EQUAL = 'equal'
 ASSERT_CLOSE = 'close'
@@ -55,9 +57,14 @@ class TestSet(object):
         """
         return [test.evaluate(function) for test in self]
 
-    def load(self, file):
-        pass
+    def add_new_test_case(self, test_case):
+        self.test_cases.append(test_case)
 
-    def save(self, file):
-        pass
+    def load(self, file_name):
+        with open(file_name, 'rb') as file:
+            self.test_cases = pickle.load(file)
+
+    def save(self, file_name):
+        with open(file_name, 'wb') as file:
+            pickle.dump(self.test_cases, file)
 
