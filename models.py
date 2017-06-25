@@ -1,5 +1,10 @@
+# Assert types
 ASSERT_EQUAL = 'equal'
-ASSERT_SIMILAR = 'similar'
+ASSERT_CLOSE = 'close'
+
+# Constants
+EPSILON = 10**-6
+
 
 class MalformedTestCase(Exception):
     def __init__(self, message):
@@ -13,18 +18,27 @@ class TestCase(object):
         self.output = _output
 
         if assert_type is None and assert_function is None:
-            raise MalformedTestCase('assert_type or assert_function can not be both None')
+            raise MalformedTestCase('assert_type or assert_function can not be both None.')
 
-        if assert_function is not None:
-            self.assert_function = assert_function
-        else:
-            self.assert_type = assert_type
+        if assert_type and not assert_type in [ASSERT_EQUAL, ASSERT_CLOSE]:
+            raise MalformedTestCase('assert_type is not correctly defined.')
+
+        self.assert_function = assert_function
+        self.assert_type = assert_type
 
     def evaluate(self, function):
-        pass
+        if self.assert_function is not None:
+            return self.assert_function(function(self.input), self.output)
+
+        elif self.assert_type == ASSERT_EQUAL:
+            return 1.0 if function(self.input) == self.output else 0.0
+
+        elif self.assert_type == ASSERT_CLOSE:
+            return 1.0 if function(self.input) - self.output < EPSILON else 0.0
 
 
 class TestSet(object):
+    test_cases = []
 
     def __getitem__(self, item):
         return self.test_cases[item]
