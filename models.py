@@ -1,5 +1,6 @@
 import dill as pickle
 from types import FunctionType
+import warnings
 
 
 class MalformedTestCase(Exception):
@@ -19,11 +20,26 @@ class TestCase(object):
         self.assert_function = assert_function
 
     def evaluate(self, function):
-        return self.assert_function(function(self.input), self.output)
+        if isinstance(self.input, dict):
+            try:
+                evaluation = self.assert_function(function(**self.input), self.output)
+            except TypeError:
+                _input = [val for _, val in self.input.items()]
+                evaluation = self.assert_function(function(*_input), self.output)
+                warnings.warn("Function '{func_name}' have different arguments than those defined in "
+                              "TestCase. Using them as *args."
+                              .format(func_name=function.__name__),
+                              stacklevel=4)
+        else:
+            evaluation = self.assert_function(function(self.input), self.output)
+
+        return evaluation
 
 
 class TestSet(object):
-    test_cases = []
+
+    def __init__(self):
+        self.test_cases = []
 
     def __getitem__(self, item):
         return self.test_cases[item]
