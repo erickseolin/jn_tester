@@ -1,11 +1,5 @@
 import dill as pickle
-
-# Assert types
-ASSERT_EQUAL = 'equal'
-ASSERT_CLOSE = 'close'
-
-# Constants
-EPSILON = 10**-6
+from types import FunctionType
 
 
 class MalformedTestCase(Exception):
@@ -15,28 +9,17 @@ class MalformedTestCase(Exception):
 
 class TestCase(object):
 
-    def __init__(self, _input, _output, assert_function=None, assert_type=None):
+    def __init__(self, _input, _output, assert_function):
         self.input = _input
         self.output = _output
 
-        if assert_type is None and assert_function is None:
-            raise MalformedTestCase('assert_type or assert_function can not be both None.')
-
-        if assert_type and not assert_type in [ASSERT_EQUAL, ASSERT_CLOSE]:
-            raise MalformedTestCase('assert_type is not correctly defined.')
+        if type(assert_function) is not FunctionType:
+            raise MalformedTestCase('assert_function must be of FunctionType.')
 
         self.assert_function = assert_function
-        self.assert_type = assert_type
 
     def evaluate(self, function):
-        if self.assert_function is not None:
-            return self.assert_function(function(self.input), self.output)
-
-        elif self.assert_type == ASSERT_EQUAL:
-            return 1.0 if function(self.input) == self.output else 0.0
-
-        elif self.assert_type == ASSERT_CLOSE:
-            return 1.0 if function(self.input) - self.output < EPSILON else 0.0
+        return self.assert_function(function(self.input), self.output)
 
 
 class TestSet(object):

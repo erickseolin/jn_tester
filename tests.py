@@ -1,7 +1,7 @@
 import models
 from models import TestCase, TestSet
 
-tc1 = TestCase(2, 4, assert_type=models.ASSERT_EQUAL)
+tc1 = TestCase(2, 4, assert_function=lambda x, y: 1.0 if x == y else 0.0)
 
 print('1:', tc1.evaluate(lambda n: 1*n))       # wrong
 print('1:', tc1.evaluate(lambda n: 2*n))
