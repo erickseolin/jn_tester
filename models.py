@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 import dill as pickle
 from types import FunctionType
 import warnings
@@ -9,6 +11,7 @@ class MalformedTestCase(Exception):
 
 
 class TestCase(object):
+    """TestCase."""
 
     def __init__(self, _input, _output, assert_function):
         self.input = _input
@@ -37,6 +40,7 @@ class TestCase(object):
 
 
 class TestSet(object):
+    """TestSet."""
 
     def __init__(self):
         self.test_cases = []
@@ -59,11 +63,10 @@ class TestSet(object):
     def add_new_test_case(self, test_case):
         self.test_cases.append(test_case)
 
-    def load(self, file_name):
+    def load(self, file_name='main_test.test'):
         with open(file_name, 'rb') as file:
             self.test_cases = pickle.load(file)
 
-    def save(self, file_name):
+    def save(self, file_name='main_test.test'):
         with open(file_name, 'wb') as file:
             pickle.dump(self.test_cases, file)
-
