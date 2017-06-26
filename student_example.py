@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-from client.test import run_test
+from student.test import run_test
 
 
 if __name__ == '__main__':
