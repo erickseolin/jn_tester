@@ -63,10 +63,22 @@ class TestSet(object):
     def add_new_test_case(self, test_case):
         self.test_cases.append(test_case)
 
-    def load(self, file_name='main_test.test'):
-        with open(file_name, 'rb') as file:
-            self.test_cases = pickle.load(file)
+    def load(self, file_name):
+        if not file_name.endswith('.test'):
+            warnings.warn('TestSet.load error: file must be .test file format.')
+        try:
+            with open(file_name, 'rb') as file:
+                self.test_cases = pickle.load(file)
+        except Exception as err:
+            cls_err = err.__class__.__name__
+            warnings.warn('TestSet.load {0} error: {1}'.format(cls_err, err))
 
-    def save(self, file_name='main_test.test'):
-        with open(file_name, 'wb') as file:
-            pickle.dump(self.test_cases, file)
+    def save(self, file_name):
+        if not file_name.endswith('.test'):
+            warnings.warn('TestSet.save error: file must be .test file format.')
+        try:
+            with open(file_name, 'wb') as file:
+                pickle.dump(self.test_cases, file)
+        except Exception as err:
+            cls_err = err.__class__.__name__
+            warnings.warn('TestSet.save {0} error: {1}'.format(cls_err, err))
