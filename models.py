@@ -1,7 +1,5 @@
 # -*- encoding: utf-8 -*-
 
-import timeit
-import functools
 import dill as pickle
 from types import FunctionType
 import warnings
@@ -27,18 +25,15 @@ class TestCase(object):
     def evaluate(self, function):
         if isinstance(self.input, dict):
             try:
-                # timeit.Timer(functools.partial(function, **self.input)).timeit(number=3)
                 evaluation = self.assert_function(function(**self.input), self.output)
             except TypeError:
                 _input = [val for _, val in self.input.items()]
-                # timeit.Timer(functools.partial(func, *input)).timeit(number=3)
                 evaluation = self.assert_function(function(*_input), self.output)
                 warnings.warn("Function '{func_name}' have different arguments than those defined in "
                               "TestCase. Using them as *args."
                               .format(func_name=function.__name__),
                               stacklevel=4)
         else:
-            # timeit.Timer(functools.partial(function, self.input)).timeit(number=3)
             evaluation = self.assert_function(function(self.input), self.output)
 
         return evaluation
@@ -47,8 +42,9 @@ class TestCase(object):
 class TestSet(object):
     """TestSet."""
 
-    def __init__(self):
+    def __init__(self, min_score=1.0):
         self.test_cases = []
+        self.min_score = min_score
 
     def __getitem__(self, item):
         return self.test_cases[item]
@@ -63,15 +59,23 @@ class TestSet(object):
         :param function: function to be evaluates
         :return: list with the evaluated results for each test case
         """
-        return [test.evaluate(function) for test in self]
+        results = [test.evaluate(function) for test in self]
+        score = sum(results)/float(len(results))
+        return score, results
 
     def add_new_test_case(self, test_case):
         self.test_cases.append(test_case)
 
     def load(self, file_name):
+        if '.' not in file_name:
+            file_name += '.test'
+
         with open(file_name, 'rb') as file:
             self.test_cases = pickle.load(file)
 
     def save(self, file_name):
+        if '.' not in file_name:
+            file_name += '.test'
+
         with open(file_name, 'wb') as file:
             pickle.dump(self.test_cases, file)

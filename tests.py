@@ -1,5 +1,5 @@
 from models import TestCase, TestSet
-
+from student.test import submit_test
 
 def equal(x, y):
     return 1.0 if x == y else 0.0
@@ -41,5 +41,14 @@ test3.add_new_test_case(TestCase({'x': 100, 'y': 101}, 201, assert_function=equa
 print('1:', test3.evaluate(lambda x, y: x*y), 'wrong')       # wrong
 print('2:', test3.evaluate(lambda x, y: x+y), 'correct')
 print('3:', test3.evaluate(lambda x, y: x-y), 'wrong')      # wrong
+print()
+
+test3.save('teste3')
+
+submit_test('teste3', lambda x, y: x*y)
+print()
+
+
+submit_test('teste3', lambda x, y: x+y)
 
 
