@@ -1,26 +1,29 @@
 # -*- encoding: utf-8 -*-
 
-from types import FunctionType
+
 from .models import Execution
-from models import TestSet, MalformedTestCase
+from .presentation import Presenter
+from models import Results
 
 # In memory...
 execution = Execution()
 
 
-def run_test(test_name='main_test', fnc=None):
+def run_test(test_set_name, fnc=None):
     """"""
-    if type(fnc) is not FunctionType:
-        raise MalformedTestCase('assert_function must be of FunctionType.')
-
-    test = None
-    if not execution.already_loaded():
-        test = TestSet()
-        test.load(test_name)
-    execution.reload_params(test, fnc)
+    if execution.already_loaded(test_set_name):
+        execution.load(test_set_name, fnc)
     return execution.exec_test()
 
 
-def submit_test():
+def submit_test(test_set_name, username, fnc=None, presentation_format='text'):
     """"""
-    pass
+    if execution.already_loaded(test_set_name):
+        execution.load(test_set_name, fnc)
+    _data = execution.submit_test()
+
+    results = Results(test_set_name, username)
+    results.save('.{0}-{1}.score'.format(test_set_name, username))
+
+    presenter = Presenter(_data, presentation_format=presentation_format)
+    presenter.show()
