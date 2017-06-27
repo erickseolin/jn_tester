@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-from pandas import DataFrame as dt
+from pandas import DataFrame
 
 
 class Presenter:
@@ -26,15 +26,33 @@ class Presenter:
         print('\nShowing results:')
         print('-' * 20)
         print('Final score: ', self.__data.get('final_score'))
-        for i, result in enumerate(self.__data.get('results')):
-            print(i+1, ': ', result)
-            perf = self.__data.get('performance')
-            print(' - time: ', perf[i].get('time'), ' ms')
-            print(' - memory: ', perf[i].get('memory'), ' Mb')
+        size = len(self.__data.get('results'))
+        if size > 0:
+            for i in range(size):
+                result = self.__data.get('performance')[i]
+                perf = self.__data.get('performance')[i]
+                print(i + 1, ': ', result)
+                print(' - time: ', perf.get('time'), ' ms')
+                print(' - memory: ', perf.get('memory'), ' Mb')
+        else:
+            raise Exception("No results to visualize.")
 
     def __show_results_in_table(self):
         """Internal method to parse and show the results in table (pandas dataframe) format."""
         print('\nShowing results:')
         print('-' * 20)
         print('Final score: ', self.__data.get('final_score'))
-        # TODO: show results in pandas DataFrame
+        _data, _index = self.__prepare_data_to_dataframe()
+        dt = DataFrame(data=_data, index=_index)
+
+    def __prepare_data_to_dataframe(self):
+        _data = {}
+        _index = {}
+        size = len(self.__data.get('results'))
+        if size > 0:
+            for i in range(size):
+                # TODO: Organize the data
+                # _data['Test{0}'.format(i)]
+                results = self.__data.get('performance')[i]
+                perf = self.__data.get('performance')[i]
+        return _data, _index
