@@ -34,8 +34,8 @@ test.save('dobro.test')
 
 ### Students usage:
 
-    To run the tests create by the professor import the test file, run tests and finally 
-    submit the tests for the professor.
+To run the tests create by the professor import the test file, run tests and finally 
+submit the tests for the professor.
 
 ```python
 # -*- encoding: utf-8 -*-
