@@ -42,9 +42,12 @@ class TestCase(object):
 class TestSet(object):
     """TestSet."""
 
-    def __init__(self, min_score=1.0):
-        self.test_cases = []
+    def __init__(self, file_name=None, min_score=1.0):
         self.min_score = min_score
+        self.test_cases = []
+
+        if file_name:
+            self.load(file_name)
 
     def __getitem__(self, item):
         return self.test_cases[item]
@@ -60,8 +63,7 @@ class TestSet(object):
         :return: list with the evaluated results for each test case
         """
         results = [test.evaluate(function) for test in self]
-        score = sum(results)/float(len(results))
-        return score, results
+        return results
 
     def add_new_test_case(self, test_case):
         self.test_cases.append(test_case)
@@ -79,3 +81,38 @@ class TestSet(object):
 
         with open(file_name, 'wb') as file:
             pickle.dump(self.test_cases, file)
+
+
+class Results(object):
+
+    def __init__(self, test_name, user_name=None, scores=None, times=None):
+        self.test_name = test_name
+        self.user_name = user_name
+        self.scores = scores
+        self.times = times
+
+    def _generate_file_name(self, path):
+        return '{path}/{name}.result'.format(path=path.strip('/'), name=self.test_name)
+
+    def save(self, file_name=None, path='./'):
+        if not file_name:
+            file_name = self._generate_file_name(path)
+
+        with open(file_name, 'wb') as file:
+            pickle.dump({
+                'test_name': self.test_name,
+                'user': self.user_name,
+                'score': self.scores,
+                'time': self.times
+            }, file)
+
+    def load(self, file_name=None, path='./'):
+        if not file_name:
+            file_name = self._generate_file_name(path)
+
+        with open(file_name, 'rb') as file:
+            data = pickle.load(file)
+            self.test_name = data['test_name']
+            self.user_name = data['user']
+            self.scores = data['score']
+            self.times = data['time']

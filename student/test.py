@@ -26,7 +26,8 @@ def submit_test(test_set_name, function):
     test_set = TestSet()
     test_set.load(test_set_name)
 
-    score, results = test_set.evaluate(function)
+    results = test_set.evaluate(function)
+    score = sum(results) / float(len(results))
 
     for result in results:
         msg = '[{}/1.0]'.format(result)
