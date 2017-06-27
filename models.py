@@ -75,3 +75,43 @@ class TestSet(object):
     def save(self, file_name):
         with open(file_name, 'wb') as file:
             pickle.dump(self.test_cases, file)
+            
+import pickle as pkl
+
+class model(dict):
+    def __init__( self ):
+        pass
+
+    def addFuntion( self, id): 
+        self[id] = []
+
+    def deleteFunction( self, id ):   
+        del self[id]
+
+    def saveDict( self ): 
+        print (type(self))
+        pkl.dump( dict(self), open( "model.dict", "wb" ) )
+
+    def loadDict( self ): 
+        print ('Before upacking model.dic, self ==',type(self))
+        self = pkl.load( open( "model.dict", "rb" ) ) 
+        print ('After upacking model.dic, self ==',type(self))
+        
+    def appendInput( self, id, val):
+        self[id].append(val)
+        
+    def updateAllInput( self, id, val):
+        self.update({id:val})
+    
+    def updateInput( self, id, id_input, val):
+        self[id][id_input]=val
+
+#if __name__ == '__main__':
+#    model = model()
+#    #uncomment after first run
+#    model.load()
+#    print(model)
+#    #comment after first run
+#    model.add( 'South Park', 'Comedy Central1' )
+#    model.save()
+

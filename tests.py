@@ -1,4 +1,4 @@
-from models import TestCase, TestSet
+from models import TestCase, TestSet, model
 
 
 def equal(x, y):
@@ -7,6 +7,8 @@ def equal(x, y):
 
 def double(b):
     return 2*b
+
+
 
 # Simple test
 test = TestSet()
@@ -43,3 +45,19 @@ print('2:', test3.evaluate(lambda x, y: x+y), 'correct')
 print('3:', test3.evaluate(lambda x, y: x-y), 'wrong')      # wrong
 
 
+
+#
+
+model = model()
+model.addFuntion('1')
+model.appendInput('1',3)
+model.appendInput('1',[4,5])
+model.updateAllInput('1',[1,[2,3]])
+model.updateInput('1',0,2)
+model.saveDict()
+model.loadDict()
+model.addFuntion('2')
+model.appendInput('2',2)
+model.appendInput('2',[3,4])
+model.updateAllInput('2',[0,[1,2]])
+print(model['1'][0])
