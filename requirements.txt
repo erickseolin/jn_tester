@@ -1,3 +1,5 @@
 dill
+memory_profiler
+psutil
 numpy
 pandas

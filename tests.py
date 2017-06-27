@@ -45,10 +45,10 @@ print()
 
 test3.save('teste3')
 
-submit_test('teste3', lambda x, y: x*y)
+submit_test('teste3', 'rdenadai', lambda x, y: x*y)
 print()
 
 
-submit_test('teste3', lambda x, y: x+y)
+submit_test('teste3', 'rdenadai', lambda x, y: x+y)
 
 

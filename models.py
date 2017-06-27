@@ -2,6 +2,7 @@
 
 import timeit
 import functools
+from memory_profiler import memory_usage
 import dill as pickle
 from types import FunctionType
 import warnings
@@ -27,21 +28,51 @@ class TestCase(object):
     def evaluate(self, function):
         if isinstance(self.input, dict):
             try:
-                # timeit.Timer(functools.partial(function, **self.input)).timeit(number=3)
                 evaluation = self.assert_function(function(**self.input), self.output)
             except TypeError:
                 _input = [val for _, val in self.input.items()]
-                # timeit.Timer(functools.partial(func, *input)).timeit(number=3)
                 evaluation = self.assert_function(function(*_input), self.output)
                 warnings.warn("Function '{func_name}' have different arguments than those defined in "
                               "TestCase. Using them as *args."
                               .format(func_name=function.__name__),
                               stacklevel=4)
         else:
-            # timeit.Timer(functools.partial(function, self.input)).timeit(number=3)
             evaluation = self.assert_function(function(self.input), self.output)
 
         return evaluation
+
+    def performance(self, function, runs=5):
+        """
+        Execute performance tests of time of execution and memory usage
+        :param function: function to be evaluates
+        :param runs: how many times the performance check should happen. default 5
+        :return: dict that contains information about this execution
+        """
+        perf = {
+            'time': 0.,
+            'memory': 0.
+        }
+
+        if isinstance(self.input, dict):
+            try:
+                time_param = functools.partial(function, **self.input)
+                mem_param = (function, (), self.input)
+            except TypeError:
+                _input = [val for _, val in self.input.items()]
+                time_param = functools.partial(function, *_input)
+                mem_param = (function, self.input, {})
+                warnings.warn("Function '{func_name}' have different arguments than those defined in "
+                              "TestCase. Using them as *args."
+                              .format(func_name=function.__name__),
+                              stacklevel=4)
+        else:
+            time_param = functools.partial(function, self.input)
+            mem_param = (function, (self.input,), {})
+
+        # Convert to milliseconds
+        perf['time'] = round(timeit.Timer(time_param).timeit(number=runs) * 1000, 8)
+        perf['memory'] = round(memory_usage(proc=mem_param, max_usage=True)[0], 2)
+        return perf
 
 
 class TestSet(object):
@@ -69,6 +100,15 @@ class TestSet(object):
         """
         results = [test.evaluate(function) for test in self]
         return results
+
+    def performance(self, function, runs=5):
+        """
+        Runs performance validation of the function in each TestCase for n times (default 5)
+        :param function: function to be evaluates
+        :param runs: how many times the performance check should happen. default 5
+        :return: list containing dict with the values of execution. list[dict, dict...]
+        """
+        return [test.performance(function, runs) for test in self]
 
     def add_new_test_case(self, test_case):
         self.test_cases.append(test_case)

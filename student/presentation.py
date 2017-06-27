@@ -2,6 +2,7 @@
 
 from pandas import DataFrame as dt
 
+
 class Presenter:
     """Presentation class. It renders information about the results returned by tests."""
 
@@ -27,6 +28,9 @@ class Presenter:
         print('Final score: ', self.__data.get('final_score'))
         for i, result in enumerate(self.__data.get('results')):
             print(i+1, ': ', result)
+            perf = self.__data.get('performance')
+            print(' - time: ', perf[i].get('time'), ' ms')
+            print(' - memory: ', perf[i].get('memory'), ' Mb')
 
     def __show_results_in_table(self):
         """Internal method to parse and show the results in table (pandas dataframe) format."""

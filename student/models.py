@@ -33,7 +33,10 @@ class Execution:
     def exec_test(self):
         """Execute the Test itself."""
         if len(self.__test_set.test_cases) > 0:
-            return self.__test_set.evaluate(self.__fnc)
+            return {
+                'results': self.__test_set.evaluate(self.__fnc),
+                'performance': self.__test_set.performance(self.__fnc)
+            }
         else:
             raise Exception('Not test cases to execute in this test.')
 
@@ -47,6 +50,7 @@ class Execution:
                 'success': False,
                 'final_score': 0.,
                 'results': [],
+                'performance': []
             }
 
             for result in results:
@@ -58,9 +62,12 @@ class Execution:
             _data['final_score'] = "{:.2f}".format(score)
             if score >= self.__test_set.min_score:
                 _data['success'] = True
+
+            # Let's execute performance tests!
+            performance = self.__test_set.performance(self.__fnc)
+            for perf in performance:
+                _data['performance'].append(perf)
+
             return _data
         else:
             raise Exception('Not test cases to execute in this test.')
-
-
-
