@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 
+from pandas import DataFrame as dt
 
 class Presenter:
     """Presentation class. It renders information about the results returned by tests."""
@@ -13,12 +14,14 @@ class Presenter:
         self.__presentation_format = presentation_format
 
     def show(self):
+        """Show the results in the choosen format, default is text."""
         if self.__presentation_format is 'text':
             self.__show_results_in_text()
         else:
             self.__show_results_in_table()
 
     def __show_results_in_text(self):
+        """Internal method to parse and show the results in text format."""
         print('\nShowing results:')
         print('-' * 20)
         print('Final score: ', self.__data.get('final_score'))
@@ -26,4 +29,7 @@ class Presenter:
             print(i+1, ': ', result)
 
     def __show_results_in_table(self):
-        pass
+        """Internal method to parse and show the results in table (pandas dataframe) format."""
+        print('\nShowing results:')
+        print('-' * 20)
+        # TODO: show results in pandas DataFrame
