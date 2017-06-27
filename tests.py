@@ -1,6 +1,7 @@
 from models import TestCase, TestSet
 from student.test import submit_test
 
+
 def equal(x, y):
     return 1.0 if x == y else 0.0
 
