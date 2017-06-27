@@ -60,7 +60,7 @@ class TestCase(object):
             except TypeError:
                 _input = [val for _, val in self.input.items()]
                 time_param = functools.partial(function, *_input)
-                mem_param = (function, self.input, {})
+                mem_param = (function, _input, {})
                 warnings.warn("Function '{func_name}' have different arguments than those defined in "
                               "TestCase. Using them as *args."
                               .format(func_name=function.__name__),
