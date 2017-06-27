@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 from types import FunctionType
-from models import TestSet, MalformedTestCase
+from models import TestSet, MalformedTestCase, Results
 
 
 class Execution:
@@ -11,6 +11,7 @@ class Execution:
         self.__test_set_name = None
         self.__test_set = None
         self.__fnc = None
+        self.__data = None
 
     def __check_load_test_set(self, test_set_name):
         """Checking if TestSet file name is not the same as before."""
@@ -50,6 +51,7 @@ class Execution:
                 'success': False,
                 'final_score': 0.,
                 'results': [],
+                'scores': [],
                 'performance': []
             }
 
@@ -58,6 +60,7 @@ class Execution:
                 if result >= self.__test_set.min_score:
                     msg = 'OK'
                 _data['results'].append('[{0}/1.0] => {1}'.format(result, msg))
+                _data['scores'].append(result)
 
             _data['final_score'] = "{:.2f}".format(score)
             if score >= self.__test_set.min_score:
@@ -68,6 +71,13 @@ class Execution:
             for perf in performance:
                 _data['performance'].append(perf)
 
+            self.__data = _data
             return _data
         else:
             raise Exception('Not test cases to execute in this test.')
+
+    def record_test_results(self, test_set_name, username):
+        scores = self.__data.get('scores')
+        times = self.__data.get('performance')
+        results = Results(test_set_name, username, scores=scores, times=times)
+        results.save('.{0}-{1}.score'.format(test_set_name, username))

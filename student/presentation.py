@@ -36,4 +36,5 @@ class Presenter:
         """Internal method to parse and show the results in table (pandas dataframe) format."""
         print('\nShowing results:')
         print('-' * 20)
+        print('Final score: ', self.__data.get('final_score'))
         # TODO: show results in pandas DataFrame
