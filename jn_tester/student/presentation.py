@@ -55,7 +55,7 @@ class Presenter:
                 # fnc = self.__data.get('function')
                 score = '{0}%'.format(round(self.__data.get('scores')[i] * 100))
                 perf = self.__data.get('performance')[i]
-                _index.append('Test{0}'.format(i))
+                _index.append('Test {0}'.format(i+1))
                 _data.append([
                     score,
                     '{0} ms'.format(perf.get('time')),

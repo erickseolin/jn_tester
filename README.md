@@ -10,7 +10,7 @@ Jupyter notebook code grading system.
  - Save the model.
  
  ```python
-from models import TestCase, TestSet
+from jn_tester.professor.models import TestCase, TestSet
 
 def equal(x, y):
     return 1.0 if x == y else 0.0
@@ -32,6 +32,15 @@ print()
 test.save('dobro.test')
  ```
 
+ - After the users executed their tests and submit the solution you could run the table.
+ ```python
+ from jn_tester.professor.tables import view_complete_table
+ 
+ # Keep in mind that you may need to pass the base path to look for all students files
+ view_complete_table('dobro.test')
+ ```
+ 
+
 ### Students usage:
 
 To run the tests create by the professor import the test file, run tests and finally 
@@ -40,7 +49,7 @@ submit the tests for the professor.
 ```python
 # -*- encoding: utf-8 -*-
 
-from student.test import run_test, submit_test
+from jn_tester.student.test import run_test, submit_test
 
 
 if __name__ == '__main__':
