@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-from src.student.test import run_test, submit_test
+from jn_tester.student.test import run_test, submit_test
 
 
 def vezes_2(n):

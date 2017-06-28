@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 # from src.student.test import submit_test
-from src.professor.models import TestCase, TestSet
+from jn_tester.professor.models import TestCase, TestSet
 
 
 def equal(x, y):

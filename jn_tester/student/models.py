@@ -6,7 +6,7 @@ import re
 import warnings
 from types import FunctionType
 
-from src.professor.models import TestSet, MalformedTestCase, Results
+from jn_tester.professor.models import TestSet, MalformedTestCase, Results
 
 
 class Execution:
