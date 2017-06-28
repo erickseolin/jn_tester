@@ -28,6 +28,8 @@ test.save('dobro.test')
 test2 = TestSet()
 test2.load('dobro.test')
 
+print(test2)
+
 print('1:', test2.evaluate(lambda n: 2**n), 'wrong')       # wrong
 print('2:', test2.evaluate(lambda n: 2*n), 'correct')
 print('3:', test2.evaluate(lambda n: n**2), 'wrong')      # wrong
@@ -50,5 +52,3 @@ print()
 submit_test('teste3', lambda x, y: x*y)
 print()
 submit_test('teste3', lambda x, y: x+y)
-
-
