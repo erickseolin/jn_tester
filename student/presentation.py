@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 from pandas import DataFrame
+from IPython.display import display
 
 
 class Presenter:
@@ -23,13 +24,13 @@ class Presenter:
 
     def __show_results_in_text(self):
         """Internal method to parse and show the results in text format."""
-        print('\nShowing results:')
+        print('\nShowing results:', self.__data.get('function'))
         print('-' * 20)
         print('Final score: ', self.__data.get('final_score'))
         size = len(self.__data.get('results'))
         if size > 0:
             for i in range(size):
-                result = self.__data.get('performance')[i]
+                result = self.__data.get('results')[i]
                 perf = self.__data.get('performance')[i]
                 print(i + 1, ': ', result)
                 print(' - time: ', perf.get('time'), ' ms')
@@ -39,20 +40,25 @@ class Presenter:
 
     def __show_results_in_table(self):
         """Internal method to parse and show the results in table (pandas dataframe) format."""
-        print('\nShowing results:')
+        print('\nShowing results:', self.__data.get('function'))
         print('-' * 20)
         print('Final score: ', self.__data.get('final_score'))
-        _data, _index = self.__prepare_data_to_dataframe()
-        dt = DataFrame(data=_data, index=_index)
+        _data, _index, _columns = self.__prepare_data_to_dataframe()
+        dt = DataFrame(data=_data, index=_index, columns=_columns)
+        display(dt)
 
     def __prepare_data_to_dataframe(self):
-        _data = {}
-        _index = {}
+        _data, _index, _columns = [], [], ['Score', 'Time', 'Memory']
         size = len(self.__data.get('results'))
         if size > 0:
             for i in range(size):
-                # TODO: Organize the data
-                # _data['Test{0}'.format(i)]
-                results = self.__data.get('performance')[i]
+                # fnc = self.__data.get('function')
+                score = '{0}%'.format(round(self.__data.get('scores')[i] * 100))
                 perf = self.__data.get('performance')[i]
-        return _data, _index
+                _index.append('Test{0}'.format(i))
+                _data.append([
+                    score,
+                    '{0} ms'.format(perf.get('time')),
+                    '{0} Mb'.format(perf.get('memory'))
+                ])
+        return _data, _index, _columns

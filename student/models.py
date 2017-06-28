@@ -17,9 +17,12 @@ class Execution:
         """Checking if TestSet file name is not the same as before."""
         return test_set_name != self.__test_set_name
 
-    def already_loaded(self, test_set_name):
+    def already_loaded(self, test_set_name, fnc):
         """Verify if the TestSet is already loaded."""
-        return self.__test_set is None or self.__check_load_test_set(test_set_name)
+        return \
+            self.__test_set is None or \
+            self.__check_load_test_set(test_set_name) or \
+            self.__fnc != fnc
 
     def load(self, test_set_name, fnc):
         """Load the TestSet and keep in memory constraints."""
@@ -49,6 +52,7 @@ class Execution:
 
             _data = {
                 'success': False,
+                'function': self.__fnc.__name__,
                 'final_score': 0.,
                 'results': [],
                 'scores': [],
@@ -62,7 +66,7 @@ class Execution:
                 _data['results'].append('[{0}/1.0] => {1}'.format(result, msg))
                 _data['scores'].append(result)
 
-            _data['final_score'] = "{:.2f}".format(score)
+            _data['final_score'] = "{0}%".format(round(score * 100))
             if score >= self.__test_set.min_score:
                 _data['success'] = True
 
