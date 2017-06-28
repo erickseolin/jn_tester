@@ -1,7 +1,12 @@
 # -*- encoding: utf-8 -*-
 
+import getpass
+import os
+import re
+import warnings
 from types import FunctionType
-from models import TestSet, MalformedTestCase, Results
+
+from src.professor.models import TestSet, MalformedTestCase, Results
 
 
 class Execution:
@@ -12,6 +17,24 @@ class Execution:
         self.__test_set = None
         self.__fnc = None
         self.__data = None
+
+    def __load_username(self):
+        """Loads the username that is executing the tests."""
+        self.__username = getpass.getuser()
+        # Bellow is a platform specific... please, comment the bellow line if need it
+        _user_login = 'adessowiki'
+        # The try bellow is a bug correction for jupyter notebooks
+        try:
+            _user_login = os.getlogin()
+        except OSError as err:
+            warnings.warn("OSError... {0}".format(err))
+        # Let's get the user folder to see if its running inside his own folder
+        # We are forcing this anyway... if os.getlogin gives error
+        if _user_login == 'adessowiki':
+            _user_folder = os.getcwd()
+            _matched = re.match(r'.*(\/{0}\/).*'.format(self.__username), _user_folder)
+            if not _matched:
+                raise Exception('You can\'t submit function from another user')
 
     def __check_load_test_set(self, test_set_name):
         """Checking if TestSet file name is not the same as before."""
@@ -80,8 +103,10 @@ class Execution:
         else:
             raise Exception('Not test cases to execute in this test.')
 
-    def record_test_results(self, test_set_name, username):
+    def record_test_results(self, test_set_name):
+        self.__load_username()
         scores = self.__data.get('scores')
-        times = self.__data.get('performance')
-        results = Results(test_set_name, username, scores=scores, times=times)
-        results.save('.{0}-{1}.score'.format(test_set_name, username))
+        # We are not sending memory usage yet to the professor results.
+        times = [perf['time'] for perf in self.__data.get('performance')]
+        results = Results(self.__fnc.__name__, test_set_name, self.__username, scores=scores, times=times)
+        results.save('.{0}-{1}.score'.format(test_set_name, self.__username))

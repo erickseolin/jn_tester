@@ -2,14 +2,12 @@
 
 import glob
 import os
+import warnings
 from itertools import chain
-import pandas as pd
 from IPython.display import display, HTML
-try:
-    import dill as pickle
-except:
-    import pickle
-    
+import pandas as pd
+import dill as pickle
+
 
 def view_complete_table(test_name, base_path='/home/*/'):
     ''' Gathers the results submited by all students and shows them in a table ranked by 
@@ -26,6 +24,7 @@ def view_complete_table(test_name, base_path='/home/*/'):
         raise Exception('Zero result files found.')
 
     results = []
+    print(result_files)
     for result_file in result_files:
         
         try:
@@ -36,14 +35,16 @@ def view_complete_table(test_name, base_path='/home/*/'):
                 
             if not isinstance(pdata, list):
                 pdata = [pdata]
-            
+
             for data in pdata:
-                data['final_score'] = sum(data['scores']) / float(len(data['scores']))
-                data['mean_time'] = sum(data['times']) / float(len(data['times'])) 
+                data['final_score'] = sum(data['score']) / float(len(data['score']))
+                data['mean_time'] = sum(data['time']) / float(len(data['time']))
                 results.append(data)
 
-        except Exception as e:
+        except Exception as err:
             # Failed to read the file or access data values: ignore
+            cls_err = err.__class__.__name__
+            warnings.warn("Exception happen {0} - {1}".format(cls_err, err))
             continue
 
     # Sorts by descending final score and then ascending by mean execution time
@@ -52,7 +53,7 @@ def view_complete_table(test_name, base_path='/home/*/'):
     # Transform into list with order: ranking, funcname, user, Test[i] Score, Test[i] Time, Mean Time, Final score
     ## Generate column headers:
     columns_headers = ['Function Ranking', 'Function', 'Author', 'Mean Time (ms)', 'Final Score']
-    N = len(results[0]['scores']) + 1
+    N = len(results[0]['score']) + 1
     test_headers = list(chain.from_iterable(('Test {}: Score'.format(i), 'Test {}: Time (ms)'.format(i)) for i in range(1,N)))
     columns_headers[3:3] = test_headers
 
@@ -62,7 +63,7 @@ def view_complete_table(test_name, base_path='/home/*/'):
 
     for rank, r in enumerate(results):
         rlist = list([rank+1, r['funcname'], r['user'], '{0:.2f}'.format(r['mean_time']), '{0:.2f}'.format(r['final_score'])])
-        tests_score_time = list(chain.from_iterable(('{0:.2f}'.format(r['scores'][i]), '{0:.2f}'.format(r['times'][i])) for i in range(len(r['scores']))))
+        tests_score_time = list(chain.from_iterable(('{0:.2f}'.format(r['score'][i]), '{0:.2f}'.format(r['time'][i])) for i in range(len(r['score']))))
         
         # Commented: times and scores as floats instead of strings {0:.2f}
         # rlist = list([rank+1, r['funcname'], r['user'], r['mean_time'], r['final_score']])
