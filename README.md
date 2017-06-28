@@ -1,6 +1,15 @@
 # jn_tester
 Jupyter notebook code grading system.
 
+## Intalation:
+
+Clone this repository and run the setup.py:
+```
+git clone https://github.com/erickseolin/jn_tester.git
+cd jn_tester
+python setup.py install
+```
+
 ## Usage:
 
 ### Professor usage:
