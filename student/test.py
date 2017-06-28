@@ -27,6 +27,7 @@ def submit_test(test_set_name, fnc=None , presentation_format='text'):
         local_cod = current_user_cod
  
     if local_cod == current_user_cod:
+        username = current_user_cod
         pass
     else:
         print('You can\'t submit function from another user')
