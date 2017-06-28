@@ -1,4 +1,7 @@
-from models import TestCase, TestSet
+# -*- encoding: utf-8 -*-
+
+from jn_tester.student.test import submit_test
+from jn_tester.professor.models import TestCase, TestSet
 
 
 def equal(x, y):
@@ -37,9 +40,15 @@ test3.add_new_test_case(TestCase({'x': 2, 'y': 2}, 4, assert_function=equal))
 test3.add_new_test_case(TestCase({'x': 2, 'y': 3}, 5, assert_function=equal))
 test3.add_new_test_case(TestCase({'x': 10, 'y': 10}, 20, assert_function=equal))
 test3.add_new_test_case(TestCase({'x': 100, 'y': 101}, 201, assert_function=equal))
+test3.save('teste3')
 
 print('1:', test3.evaluate(lambda x, y: x*y), 'wrong')       # wrong
 print('2:', test3.evaluate(lambda x, y: x+y), 'correct')
 print('3:', test3.evaluate(lambda x, y: x-y), 'wrong')      # wrong
+print()
+
+submit_test('teste3', lambda x, y: x*y)
+print()
+submit_test('teste3', lambda x, y: x+y)
 
 
