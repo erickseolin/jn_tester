@@ -130,7 +130,8 @@ class TestSet(object):
 
 class Results(object):
 
-    def __init__(self, test_name, user_name=None, scores=None, times=None):
+    def __init__(self, fnc, test_name, user_name=None, scores=None, times=None):
+        self.fnc = fnc
         self.test_name = test_name
         self.user_name = user_name
         self.scores = scores
@@ -145,6 +146,7 @@ class Results(object):
 
         with open(file_name, 'wb') as file:
             pickle.dump({
+                'funcname': self.fnc,
                 'test_name': self.test_name,
                 'user': self.user_name,
                 'score': self.scores,
@@ -157,6 +159,7 @@ class Results(object):
 
         with open(file_name, 'rb') as file:
             data = pickle.load(file)
+            self.fnc = data['funcname']
             self.test_name = data['test_name']
             self.user_name = data['user']
             self.scores = data['score']
