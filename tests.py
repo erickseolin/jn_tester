@@ -51,5 +51,3 @@ print()
 
 
 submit_test('teste3', 'rdenadai', lambda x, y: x+y)
-
-
