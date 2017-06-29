@@ -27,7 +27,8 @@ class Execution:
         try:
             _user_login = os.getlogin()
         except OSError as err:
-            warnings.warn("OSError... {0}".format(err))
+            # warnings.warn("OSError... {0}".format(err))
+            pass
         # Let's get the user folder to see if its running inside his own folder
         # We are forcing this anyway... if os.getlogin gives error
         if _user_login == 'adessowiki':
@@ -103,10 +104,10 @@ class Execution:
         else:
             raise Exception('Not test cases to execute in this test.')
 
-    def record_test_results(self, test_set_name):
+    def record_test_results(self, test_set_name, test_set_folder='./'):
         self.__load_username()
         scores = self.__data.get('scores')
         # We are not sending memory usage yet to the professor results.
         times = [perf['time'] for perf in self.__data.get('performance')]
         results = Results(self.__fnc.__name__, test_set_name, self.__username, scores=scores, times=times)
-        results.save('.{0}-{1}.score'.format(test_set_name, self.__username))
+        results.save('.{0}-{1}.score'.format(test_set_name, self.__username), test_set_folder)

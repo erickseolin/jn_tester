@@ -69,8 +69,8 @@ for student in students:
             # Time between 0 and 500
             times.append(random.triangular(0, 500))
 
-        fake_data.update({'scores': scores})
-        fake_data.update({'times': times})
+        fake_data.update({'score': scores})
+        fake_data.update({'time': times})
 
         print('fake_data: {}'.format(fake_data))
         

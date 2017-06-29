@@ -21,8 +21,11 @@ def submit_test(test_set_name, fnc=None, presentation_format='text'):
         execution.load(test_set_name, fnc)
     # Get the data
     _data = execution.submit_test()
+    # Parse the path
+    test_set_name = test_set_name.split('/')[-1]
+    test_set_folder = test_set_name.split('/')[:-1]
     # Record the data
-    execution.record_test_results(test_set_name)
+    execution.record_test_results(test_set_name, test_set_folder)
     # Present the data for the student
     presenter = Presenter(_data, presentation_format=presentation_format)
     presenter.show()
