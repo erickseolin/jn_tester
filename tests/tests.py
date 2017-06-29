@@ -1,7 +1,10 @@
 # -*- encoding: utf-8 -*-
+import sys
+sys.path.append('..')
 
-# from src.student.test import submit_test
+from jn_tester.student.test import submit_test
 from jn_tester.professor.models import TestCase, TestSet
+from jn_tester.student.models import Execution
 
 
 def equal(x, y):
@@ -9,6 +12,18 @@ def equal(x, y):
 
 
 def double(n):
+    return 2*n
+
+
+def problematic_function(n):
+    raise Exception('Error...')
+    return 2*n
+
+
+def problematic_function_2(n):
+    # Raises exception sometimes
+    if n == 2:
+        raise Exception('Error...')
     return 2*n
 
 
@@ -59,7 +74,7 @@ def test_set_tests():
     assert test.evaluate(double) == [1.0, 1.0, 1.0]
     assert test.evaluate(lambda n: n**2) == [1.0, 0.0, 0.0]    # wrong
     assert test.evaluate(lambda n: 3) == [0.0, 0.0, 0.0]    # wrong
-
+    
     # test save and load
     test.save('temp.test')
     test.load('temp.test')
@@ -90,6 +105,45 @@ def test_set_tests():
     test = TestSet('temp2.test')
     assert test.evaluate(lambda n: 3*n) == [1.0, 1.0]
     assert test.evaluate(lambda n: 4*n) == [0.0, 0.0]
+    
+    
+def execution_tests():
+    print('Starting Execution tests...')
+    
+    # Testing the behavior of exceptions
+    exec = Execution()
+    exec.load('temp.test', problematic_function)
+    exception_raised = False
+    try:
+        # Exceptions should be raised in exec_test
+        exec.exec_test()
+    except:
+        exception_raised = True
+    assert exception_raised == True
+    
+    # Scores should be all zero
+    results = exec.submit_test()
+    assert results['scores'] == [0.0, 0.0, 0.0]
+    for perf in results['performance']:
+        assert perf == {'time': 0.0, 'memory': 0.0}
+        
+        
+    exec = Execution()
+    exec.load('temp.test', problematic_function_2)
+    exception_raised = False
+    try:
+        # Exceptions should be raised in exec_test
+        exec.exec_test()
+    except:
+        exception_raised = True
+    assert exception_raised == True
+    
+    # Scores should be all zero
+    results = exec.submit_test()
+    assert results['scores'] == [0.0, 1.0, 1.0]
+    assert results['performance'][0] == {'time': 0.0, 'memory': 0.0}
+    assert results['performance'][1] != {'time': 0.0, 'memory': 0.0}
+    assert results['performance'][2] != {'time': 0.0, 'memory': 0.0}
 
 
 if __name__ == '__main__':
@@ -98,6 +152,9 @@ if __name__ == '__main__':
         print("-- TestCase testes passed! --\n")
         test_set_tests()
         print("-- TestSet testes passed! --\n")
+        execution_tests()
+        print('-- Execution tests passed! --\n')
+        
     except AssertionError:
         print("Error ocurred!")
 
