@@ -71,7 +71,8 @@ class Execution:
     def submit_test(self):
         """Execute the Test and return the results."""
         if len(self.__test_set.test_cases) > 0:
-            results = self.__test_set.evaluate(self.__fnc)
+            # Executes the tests. Tests in which an exception was raised are given score 0.0
+            results = self.__test_set.evaluate(self.__fnc, catch_exceptions=True)
             score = sum(results) / float(len(results))
 
             _data = {
