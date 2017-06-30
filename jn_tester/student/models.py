@@ -41,7 +41,7 @@ class Execution:
         """Checking if TestSet file name is not the same as before."""
         return test_set_name != self.__test_set_name
 
-    def already_loaded(self, test_set_name, fnc):
+    def loaded(self, test_set_name, fnc):
         """Verify if the TestSet is already loaded."""
         return \
             self.__test_set is None or \

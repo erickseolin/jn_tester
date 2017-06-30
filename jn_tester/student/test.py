@@ -9,15 +9,15 @@ execution = Execution()
 
 
 def run_test(test_set_name, fnc=None):
-    """"""
-    if execution.already_loaded(test_set_name, fnc):
+    """Execute a function in the TestCases that the TestSet has."""
+    if not execution.loaded(test_set_name, fnc):
         execution.load(test_set_name, fnc)
     return execution.exec_test()
 
 
 def submit_test(test_set_name, fnc=None, presentation_format='text'):
-    """"""
-    if execution.already_loaded(test_set_name, fnc):
+    """Submit the results and show tables / text of results."""
+    if not execution.loaded(test_set_name, fnc):
         execution.load(test_set_name, fnc)
     # Get the data
     _data = execution.submit_test()
