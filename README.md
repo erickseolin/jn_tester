@@ -36,17 +36,18 @@ test.add_new_test_case(TestCase({'n': 4}, 8, assert_function=equal))
 print('1:', test.evaluate(lambda n: 2**n), 'wrong')       # wrong
 print('2:', test.evaluate(double), 'correct')
 print('3:', test.evaluate(lambda n: n**2), 'wrong')      # wrong
-print()
 
 test.save('dobro.test')
  ```
 
  - After the users executed their tests and submit the solution you could run the table.
  ```python
+ import os
  from jn_tester.professor.tables import view_complete_table
  
  # Keep in mind that you may need to pass the base path to look for all students files
- view_complete_table('dobro.test')
+ base_path = '/'.join(os.getcwd().split('/')[:-1]) + '/**/'
+ view_complete_table('dobro.test', base_path=base_path)
  ```
  
 
@@ -62,7 +63,7 @@ from jn_tester.student.test import run_test, submit_test
 
 
 if __name__ == '__main__':
-    print(run_test('dobro.test', fnc=lambda n: 2 ** n))
-    print(run_test('dobro.test', fnc=lambda n: 3 * n))
-    submit_test('dobro.test', 'rdenadai', fnc=lambda n: 3 * n)
+    run_test('dobro.test', fnc=lambda n: 2 ** n)
+    run_test('dobro.test', fnc=lambda n: 3 * n)
+    submit_test('dobro.test', fnc=lambda n: 3 * n, presentation_mode='table')
 ```

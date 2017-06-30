@@ -8,14 +8,17 @@ from .presentation import Presenter
 execution = Execution()
 
 
-def run_test(test_set_name, fnc=None):
+def run_test(test_set_name, fnc=None, presentation_mode='text'):
     """Execute a function in the TestCases that the TestSet has."""
     if not execution.loaded(test_set_name, fnc):
         execution.load(test_set_name, fnc)
-    return execution.exec_test()
+    _data = execution.exec_test()
+    # Present the data for the student
+    presenter = Presenter(_data, presentation_mode=presentation_mode)
+    presenter.show()
 
 
-def submit_test(test_set_name, fnc=None, presentation_format='text'):
+def submit_test(test_set_name, fnc=None, presentation_mode='text'):
     """Submit the results and show tables / text of results."""
     if not execution.loaded(test_set_name, fnc):
         execution.load(test_set_name, fnc)
@@ -27,5 +30,5 @@ def submit_test(test_set_name, fnc=None, presentation_format='text'):
     # Record the data
     execution.record_test_results(test_set_name, test_set_folder)
     # Present the data for the student
-    presenter = Presenter(_data, presentation_format=presentation_format)
+    presenter = Presenter(_data, presentation_mode=presentation_mode)
     presenter.show()

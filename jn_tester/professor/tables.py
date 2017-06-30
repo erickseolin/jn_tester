@@ -2,11 +2,15 @@
 
 import glob
 import os
-import warnings
+import logging
 from itertools import chain
 from IPython.display import display, HTML
 import pandas as pd
 import dill as pickle
+
+
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
 
 
 def view_complete_table(test_name, base_path='/home/*/'):
@@ -17,16 +21,17 @@ def view_complete_table(test_name, base_path='/home/*/'):
     :param test_name: test's name
     :param base_path: base path glob for result files. '''
 
+    if '/**/' not in base_path:
+        logging.debug("If you want a recursive scan, please add /**/ to the end of your chosen path.")
+
     pattern = os.path.join(base_path, ".{test_name}-*.score".format(test_name=test_name))
-    result_files = glob.glob(pattern)
-    
+    result_files = glob.glob(pattern, recursive=True)
+
     if len(result_files) == 0:
         raise Exception('Zero result files found.')
 
     results = []
-    print(result_files)
     for result_file in result_files:
-        
         try:
             with open(result_file, 'rb') as file:
                 pdata = pickle.load(file)
@@ -40,11 +45,10 @@ def view_complete_table(test_name, base_path='/home/*/'):
                 data['final_score'] = sum(data['score']) / float(len(data['score']))
                 data['mean_time'] = sum(data['time']) / float(len(data['time']))
                 results.append(data)
-
         except Exception as err:
             # Failed to read the file or access data values: ignore
             cls_err = err.__class__.__name__
-            warnings.warn("Exception happen {0} - {1}".format(cls_err, err))
+            logging.debug("Exception happen {0} - {1}".format(cls_err, err))
             continue
 
     # Sorts by descending final score and then ascending by mean execution time
@@ -72,7 +76,5 @@ def view_complete_table(test_name, base_path='/home/*/'):
 
         results_list.append(rlist)
 
-    df = pd.DataFrame(data=results_list)
-    df.columns = columns_headers
-
+    df = pd.DataFrame(data=results_list, columns=columns_headers)
     display(HTML(df.to_html(index=False)))
