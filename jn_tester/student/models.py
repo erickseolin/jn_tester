@@ -6,7 +6,7 @@ import re
 import warnings
 from types import FunctionType
 
-from jn_tester.professor.models import TestSet, MalformedTestCase, Results
+from jn_tester.professor.models import TestSet, MalformedTestCase, ResultSet
 
 
 class Execution:
@@ -108,5 +108,6 @@ class Execution:
         scores = self.__data.get('scores')
         # We are not sending memory usage yet to the professor results.
         times = [perf['time'] for perf in self.__data.get('performance')]
-        results = Results(self.__fnc.__name__, test_set_name, self.__username, scores=scores, times=times)
-        results.save('.{0}-{1}.score'.format(test_set_name, self.__username))
+        results = ResultSet(test_set_name)
+        results.add_result(self.__username, self.__fnc.__name__, scores, times)
+        results.save()
