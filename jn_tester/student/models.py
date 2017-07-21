@@ -108,6 +108,7 @@ class Execution:
         scores = self.__data.get('scores')
         # We are not sending memory usage yet to the professor results.
         times = [perf['time'] for perf in self.__data.get('performance')]
+        memory = [perf['memory'] for perf in self.__data.get('performance')]
         results = ResultSet(test_set_name)
-        results.add_result(self.__username, self.__fnc.__name__, scores, times)
+        results.add_result(self.__username, self.__fnc.__name__, scores, times, memory=memory)
         results.save()

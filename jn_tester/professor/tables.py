@@ -3,18 +3,26 @@
 from .presentation import Presenter
 
 
-def view_complete_table(test_name, base_path='./', sort_by=None):
+def view_complete_table(test_name, base_path='./', sort_by=None, presentation_format='table'):
     """Gathers the results submited by all students and shows them in a table ranked by
     score and elapsed time.
-    A result file is assumed to have the name '.TEST_NAME-STUDENT_ID.score'.
     This function will search for result files in all subdirectories of base_path.
     :param test_name: test's name
     :param base_path: base path glob for result files.
-    :param sort_by: list containing columns to be sorted."""
-
-    presenter = Presenter(test_name, base_path, sort_by)
+    :param sort_by: list containing columns to be sorted.
+    :param presentation_format: string of format presentation: table | text.
+    :param export_format: string of format to export: csv | text."""
+    presenter = Presenter(test_name, base_path, sort_by, presentation_format)
     presenter.show()
 
 
-def export_complete_table(test_name, base_path='./'):
-    pass
+def export_complete_table(test_name, base_path='./', sort_by=None, export_format='csv'):
+    """Export the values of results submited by all students and export the values to a file
+    This function will search for result files in all subdirectories of base_path.
+    :param test_name: test's name
+    :param base_path: base path glob for result files.
+    :param sort_by: list containing columns to be sorted.
+    :param presentation_format: string of format presentation: table | text.
+    :param export_format: string of format to export: csv | text."""
+    presenter = Presenter(test_name, base_path, sort_by, export_format=export_format)
+    presenter.export()
