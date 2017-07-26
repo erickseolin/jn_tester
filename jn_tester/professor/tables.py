@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
-from .presentation import ViewPresenter
-from .export import ExportPresenter
+from jn_tester.professor.view.export import ExportPresenter
+from jn_tester.professor.view.presentation import ViewPresenter
 
 
 def view_complete_table(test_name, base_path='./', sort_by=None, presentation_format='table'):

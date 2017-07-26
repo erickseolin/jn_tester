@@ -4,7 +4,7 @@
 from itertools import chain
 from enum import Enum
 import pandas as pd
-from .models import ResultScanner
+from jn_tester.professor.models import ResultScanner
 
 
 class Sorting(Enum):
