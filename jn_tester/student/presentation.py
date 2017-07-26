@@ -4,7 +4,7 @@ from pandas import DataFrame
 from IPython.display import display
 
 
-class Presenter:
+class ViewPresenter:
     """Presentation class. It renders information about the results returned by tests."""
 
     def __init__(self, data, presentation_format='text'):
