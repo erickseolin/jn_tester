@@ -96,13 +96,24 @@ class TestSet(object):
         for test in self.test_cases:
             yield test
 
-    def evaluate(self, function):
+    def evaluate(self, function, catch_exceptions=False):
         """
         Evaluates function using all test cases in the test set
         :param function: function to be evaluates
+        :param catch_exceptions: catch raised exceptions in test evaluations and produces 
+            score 0.0 to that test
         :return: list with the evaluated results for each test case
         """
-        results = [test.evaluate(function) for test in self]
+        results = []
+        for test in self:
+            if catch_exceptions:
+                try:
+                    score = test.evaluate(function)
+                except:
+                    score = 0.0
+            else:
+                score = test.evaluate(function)
+            results.append(score)
         return results
 
     def performance(self, function, runs=5):
@@ -112,7 +123,14 @@ class TestSet(object):
         :param runs: how many times the performance check should happen. default 5
         :return: list containing dict with the values of execution. list[dict, dict...]
         """
-        return [test.performance(function, runs) for test in self]
+        performances = []
+        for test in self:
+            try:
+                performances.append(test.performance(function, runs))
+            except Exception as err:
+                performances.append({'time': 0.0, 'memory': 0.0})
+                warnings.warn('Error during test execution: {0}'.format(err))
+        return performances
 
     def add_new_test_case(self, test_case):
         self.test_cases.append(test_case)
