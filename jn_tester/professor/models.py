@@ -6,6 +6,10 @@ from memory_profiler import memory_usage
 import dill as pickle
 from types import FunctionType
 import warnings
+import os
+
+
+RESULTS_EXT = 'result'
 
 
 class MalformedTestCase(Exception):
@@ -146,39 +150,75 @@ class TestSet(object):
             pickle.dump(self.test_cases, file)
 
 
-class Results(object):
+def get_result_file_name(test_name, path='./'):
+    return os.path.join(path, '{name}.{ext}'.format(name=test_name, ext=RESULTS_EXT))
 
-    def __init__(self, fnc, test_name, user_name=None, scores=None, times=None):
-        self.fnc = fnc
+
+class ResultScanner(object):
+
+    def __getitem__(self, item):
+        return self.result_sets[item]
+
+    def __iter__(self):
+        for results in self.result_sets:
+            yield results
+
+    def __init__(self, test_name):
         self.test_name = test_name
-        self.user_name = user_name
-        self.scores = scores
-        self.times = times
+        self.result_sets = []
 
-    def _generate_file_name(self, path):
-        return '{path}/{name}.result'.format(path=path.strip('/'), name=self.test_name)
+    def scan_dir(self, directory='./', clean_cache=True):
+        if clean_cache:
+            self.result_sets = []
 
-    def save(self, file_name=None, path='./'):
-        if not file_name:
-            file_name = self._generate_file_name(path)
+        file_name = "{name}.{ext}".format(name=self.test_name, ext=RESULTS_EXT)
+        for root, _, files in os.walk(directory):
+            for file in files:
+                if file == file_name:
+                    self.result_sets.append(ResultSet(self.test_name, directory=root))
+                    break   # no more files here
 
-        with open(file_name, 'wb') as file:
+        return self.result_sets
+
+
+class ResultSet(object):
+
+    def __getitem__(self, item):
+        return self.results[item]
+
+    def __iter__(self):
+        for result in self.results:
+            yield result
+
+    def __init__(self, test_name, directory='./'):
+        self.test_name = test_name
+        self.file_name = get_result_file_name(self.test_name, directory)
+        self.results = []
+        self.created = self.__load__()
+
+    def add_result(self, user_name, function_name, scores, times, **kwargs):
+        result = {'user': user_name,
+                  'function': function_name,
+                  'scores': scores,
+                  'times': times,
+                  }
+        for key, value in kwargs.items():
+            result[key] = value
+
+        self.results.append(result)
+
+    def save(self):
+        with open(self.file_name, 'wb') as file:
             pickle.dump({
-                'funcname': self.fnc,
                 'test_name': self.test_name,
-                'user': self.user_name,
-                'score': self.scores,
-                'time': self.times
+                'results': self.results,
             }, file)
 
-    def load(self, file_name=None, path='./'):
-        if not file_name:
-            file_name = self._generate_file_name(path)
-
-        with open(file_name, 'rb') as file:
-            data = pickle.load(file)
-            self.fnc = data['funcname']
-            self.test_name = data['test_name']
-            self.user_name = data['user']
-            self.scores = data['score']
-            self.times = data['time']
+    def __load__(self):
+        try:
+            with open(self.file_name, 'rb') as file:
+                data = pickle.load(file)
+                self.test_name = data['test_name']
+                self.results = data['results']
+        except FileNotFoundError:
+            return False

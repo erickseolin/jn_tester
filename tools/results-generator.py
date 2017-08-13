@@ -50,13 +50,13 @@ for student in students:
                 continue
             
         fake_data = {
-            'test_name': test_name,
             'user': student,
-            'funcname': '{}_fnc_{}'.format(test_name, int(random.random()*10))
+            'function': '{}_fnc_{}'.format(test_name, int(random.random()*10)),
         }
 
         scores = []
         times = []
+        memory = []
 
         for i in range(number_of_tests):
             # Score between 0 and 1
@@ -68,19 +68,26 @@ for student in students:
 
             # Time between 0 and 500
             times.append(random.triangular(0, 500))
+            memory.append(random.triangular(0, 500))
 
-        fake_data.update({'score': scores})
-        fake_data.update({'time': times})
+        fake_data.update({'scores': scores})
+        fake_data.update({'times': times})
+        fake_data.update({'memory': memory})
 
         print('fake_data: {}'.format(fake_data))
         
         entries.append(fake_data)
 
-    file_path = os.path.join(student, '.{}-{}.score'.format(test_name, student))
+    file_path = os.path.join(student, '{}.result'.format(test_name))
     print('Path of the pickle file: {}\n'.format(file_path))
 
+    data = {
+        'test_name': test_name,
+        'results': entries
+    }
+
     with open(file_path, 'wb') as file:
-        pickle.dump(entries, file)
+        pickle.dump(data, file)
 
 
 

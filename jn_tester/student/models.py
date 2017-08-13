@@ -3,9 +3,10 @@
 import getpass
 import os
 import re
+import warnings
 from types import FunctionType
 
-from jn_tester.professor.models import TestSet, MalformedTestCase, Results
+from jn_tester.professor.models import TestSet, MalformedTestCase, ResultSet
 
 
 class Execution:
@@ -18,7 +19,7 @@ class Execution:
         self.__data = None
 
     def __load_username(self):
-        """Private: loads the username that is executing the tests."""
+        """Loads the username that is executing the tests."""
         self.__username = getpass.getuser()
         # Bellow is a platform specific... please, comment the bellow line if need it
         _user_login = 'adessowiki'
@@ -26,8 +27,7 @@ class Execution:
         try:
             _user_login = os.getlogin()
         except OSError as err:
-            # warnings.warn("OSError... {0}".format(err))
-            pass
+            warnings.warn("OSError... {0}".format(err))
         # Let's get the user folder to see if its running inside his own folder
         # We are forcing this anyway... if os.getlogin gives error
         if _user_login == 'adessowiki':
@@ -37,14 +37,40 @@ class Execution:
                 raise Exception('You can\'t submit function from another user')
 
     def __check_load_test_set(self, test_set_name):
-        """Private: checking if TestSet file name is not the same as before."""
-        return test_set_name == self.__test_set_name
+        """Checking if TestSet file name is not the same as before."""
+        return test_set_name != self.__test_set_name
 
-    def __exec_test(self, run_performance_test=False):
-        """Private: execute the Test itself."""
+    def already_loaded(self, test_set_name, fnc):
+        """Verify if the TestSet is already loaded."""
+        return \
+            self.__test_set is None or \
+            self.__check_load_test_set(test_set_name) or \
+            self.__fnc != fnc
+
+    def load(self, test_set_name, fnc):
+        """Load the TestSet and keep in memory constraints."""
+        if type(fnc) is not FunctionType:
+            raise MalformedTestCase('assert_function must be of FunctionType.')
+
+        self.__test_set_name = test_set_name
+        self.__fnc = fnc
+        self.__test_set = TestSet()
+        self.__test_set.load(test_set_name)
+
+    def exec_test(self):
+        """Execute the Test itself."""
         if len(self.__test_set.test_cases) > 0:
-            # Executes the tests. Tests in which an exception was raised are given score 0.0
-            results = self.__test_set.evaluate(self.__fnc, catch_exceptions=True)
+            return {
+                'results': self.__test_set.evaluate(self.__fnc),
+                'performance': self.__test_set.performance(self.__fnc)
+            }
+        else:
+            raise Exception('Not test cases to execute in this test.')
+
+    def submit_test(self):
+        """Execute the Test and return the results."""
+        if len(self.__test_set.test_cases) > 0:
+            results = self.__test_set.evaluate(self.__fnc)
             score = sum(results) / float(len(results))
 
             _data = {
@@ -77,36 +103,12 @@ class Execution:
         else:
             raise Exception('Not test cases to execute in this test.')
 
-    def loaded(self, test_set_name, fnc):
-        """Verify if the TestSet is already loaded."""
-        return \
-            self.__test_set is not None or \
-            self.__check_load_test_set(test_set_name) or \
-            self.__fnc == fnc
-
-    def load(self, test_set_name, fnc):
-        """Load the TestSet and keep in memory constraints."""
-        if type(fnc) is not FunctionType:
-            raise MalformedTestCase('assert_function must be of FunctionType.')
-
-        self.__test_set_name = test_set_name
-        self.__fnc = fnc
-        self.__test_set = TestSet()
-        self.__test_set.load(test_set_name)
-
-    def exec_test(self):
-        """Execute the Test itself."""
-        return self.__exec_test()
-
-    def submit_test(self):
-        """Execute the Test and return the results."""
-        return self.__exec_test()
-
-    def record_test_results(self, test_set_name, test_set_folder='./'):
-        """Record the data from submited tests into the user file."""
+    def record_test_results(self, test_set_name):
         self.__load_username()
         scores = self.__data.get('scores')
         # We are not sending memory usage yet to the professor results.
         times = [perf['time'] for perf in self.__data.get('performance')]
-        results = Results(self.__fnc.__name__, test_set_name, self.__username, scores=scores, times=times)
-        results.save('.{0}-{1}.score'.format(test_set_name, self.__username), test_set_folder)
+        memory = [perf['memory'] for perf in self.__data.get('performance')]
+        results = ResultSet(test_set_name)
+        results.add_result(self.__username, self.__fnc.__name__, scores, times, memory=memory)
+        results.save()
