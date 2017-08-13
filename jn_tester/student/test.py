@@ -24,5 +24,5 @@ def submit_test(test_set_name, fnc=None, presentation_format='text'):
     # Record the data
     execution.record_test_results(test_set_name)
     # Present the data for the student
-    presenter = ViewPresenter(_data, presentation_format=presentation_format)
+    presenter = ViewPresenter(_data, presentation_mode=presentation_format)
     presenter.show()
