@@ -2,6 +2,7 @@
 
 from jn_tester.student.test import submit_test
 from jn_tester.professor.models import TestCase, TestSet
+from jn_tester.professor.tables import view_complete_table, export_complete_table
 
 
 def equal(x, y):
@@ -52,3 +53,14 @@ print()
 submit_test('teste3', lambda x, y: x+y)
 
 
+test_name = 'dobro'
+test_path = './'
+sort = [('time', False), ('rank', True)]
+
+print('\nShow dataframe results: ')
+view_complete_table(test_name, test_path, sort_by=sort)
+
+print('\nExport dataframe results --- ')
+export_complete_table(test_name, test_path, sort_by=sort, export_format='pkl')
+export_complete_table(test_name, test_path, sort_by=sort)
+export_complete_table(test_name, test_path, sort_by=sort, export_format='html')
