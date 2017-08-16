@@ -40,7 +40,8 @@ print('3:', test.evaluate(lambda n: n**2), 'wrong')      # wrong
 test.save('dobro.test')
  ```
 
- - After the users executed their tests and submit the solution you could run the table (with sort options).
+ - After the submission of the solutions, it is possible to show the table with sort options.
+ 
  ```python
  import os
  from jn_tester.professor.tables import view_complete_table
@@ -52,7 +53,8 @@ test.save('dobro.test')
  view_complete_table('dobro', base_path=base_path, sort_by=sort)
  ```
  
- - After the visualization, there's option to export the results to .csv, .pkl and .html
+ - After the visualization, it is possible to export the results to .csv, .pkl and .html
+ 
  ```python
  
  import os
@@ -69,8 +71,7 @@ test.save('dobro.test')
 
 ### Students usage:
 
-To run the tests created by the professor import the test file, run tests and finally 
-submit the tests for the professor.
+To run the tests created by the professor, import the test file, run tests and finally submit the tests for the professor.
 
 ```python
 # -*- encoding: utf-8 -*-
