@@ -152,4 +152,7 @@ class ViewPresenter(CommonPresenter):
         """Show results in pandas DataFrame format."""
         df = super(ViewPresenter, self)._prepare_dataframe()
         if df is not None:
+            # Better visualization in command line
+            pd.set_option('expand_frame_repr', False)
+            pd.set_option('display.max_columns', 999)
             display(df)

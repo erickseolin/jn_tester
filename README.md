@@ -1,7 +1,7 @@
 # jn_tester
 Jupyter notebook code grading system.
 
-## Intalation:
+## Installation:
 
 Clone this repository and run the setup.py:
 ```
@@ -40,21 +40,38 @@ print('3:', test.evaluate(lambda n: n**2), 'wrong')      # wrong
 test.save('dobro.test')
  ```
 
- - After the users executed their tests and submit the solution you could run the table.
+ - After the submission of the solutions, it is possible to show the table with sort options.
+ 
  ```python
  import os
  from jn_tester.professor.tables import view_complete_table
  
  # Keep in mind that you may need to pass the base path to look for all students files
  base_path = '/'.join(os.getcwd().split('/')[:-1]) + '/**/'
- view_complete_table('dobro.test', base_path=base_path)
+ 
+ sort = [('time', False), ('rank', True)]
+ view_complete_table('dobro', base_path=base_path, sort_by=sort)
+ ```
+ 
+ - After the visualization, it is possible to export the results to .csv, .pkl and .html
+ 
+ ```python
+ 
+ import os
+ from jn_tester.professor.tables import export_complete_table
+
+ base_path = '/'.join(os.getcwd().split('/')[:-1]) + '/**/'
+ sort = [('time', False), ('rank', True)]
+
+ export_complete_table('dobro', base_path, sort_by=sort)
+ export_complete_table('dobro', base_path, export_format='pkl')
+ export_complete_table('dobro', base_path, export_format='html') 
  ```
  
 
 ### Students usage:
 
-To run the tests create by the professor import the test file, run tests and finally 
-submit the tests for the professor.
+To run the tests created by the professor, import the test file, run tests and finally submit the tests for the professor.
 
 ```python
 # -*- encoding: utf-8 -*-
@@ -63,7 +80,7 @@ from jn_tester.student.test import run_test, submit_test
 
 
 if __name__ == '__main__':
-    run_test('dobro.test', fnc=lambda n: 2 ** n)
-    run_test('dobro.test', fnc=lambda n: 3 * n)
-    submit_test('dobro.test', fnc=lambda n: 3 * n, presentation_mode='table')
+    run_test('dobro', fnc=lambda n: 2 ** n)
+    run_test('dobro', fnc=lambda n: 3 * n)
+    submit_test('dobro', fnc=lambda n: 3 * n, presentation_mode='table')
 ```
