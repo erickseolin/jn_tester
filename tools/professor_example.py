@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 from jn_tester.student.test import submit_test
-from jn_tester.professor.models import TestCase, TestSet
+from jn_tester.professor.models import TestSet, load_test_set
 from jn_tester.professor.tables import view_complete_table, export_complete_table
 
 
@@ -14,9 +14,9 @@ def double(b):
 
 # Simple test
 test = TestSet()
-test.add_new_test_case(TestCase(2, 4, assert_function=lambda x, y: 1.0 if x == y else 0.0))
-test.add_new_test_case(TestCase({'n': 6}, 12, assert_function=equal))
-test.add_new_test_case(TestCase({'n': 4}, 8, assert_function=equal))
+test.add_test(2, 4, assert_function=lambda x, y: 1.0 if x == y else 0.0)
+test.add_test({'n': 6}, 12, assert_function=equal)
+test.add_test({'n': 4}, 8, assert_function=equal)
 
 print('1:', test.evaluate(lambda n: 2**n), 'wrong')       # wrong
 print('2:', test.evaluate(double), 'correct')
@@ -26,8 +26,7 @@ print()
 test.save('dobro.test')
 
 # Load test
-test2 = TestSet()
-test2.load('dobro.test')
+test2 = load_test_set('dobro.test')
 
 print('1:', test2.evaluate(lambda n: 2**n), 'wrong')       # wrong
 print('2:', test2.evaluate(lambda n: 2*n), 'correct')
@@ -37,10 +36,10 @@ print()
 # 2 parameter input test
 
 test3 = TestSet()
-test3.add_new_test_case(TestCase({'x': 2, 'y': 2}, 4, assert_function=equal))
-test3.add_new_test_case(TestCase({'x': 2, 'y': 3}, 5, assert_function=equal))
-test3.add_new_test_case(TestCase({'x': 10, 'y': 10}, 20, assert_function=equal))
-test3.add_new_test_case(TestCase({'x': 100, 'y': 101}, 201, assert_function=equal))
+test3.add_test({'x': 2, 'y': 2}, 4, assert_function=equal)
+test3.add_test({'x': 2, 'y': 3}, 5, assert_function=equal)
+test3.add_test({'x': 10, 'y': 10}, 20, assert_function=equal)
+test3.add_test({'x': 100, 'y': 101}, 201, assert_function=equal)
 test3.save('teste3')
 
 print('1:', test3.evaluate(lambda x, y: x*y), 'wrong')       # wrong

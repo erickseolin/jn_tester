@@ -10,6 +10,7 @@ import os
 
 
 RESULTS_EXT = 'result'
+TESTSET_EXT = 'test'
 
 
 class MalformedTestCase(Exception):
@@ -30,6 +31,11 @@ class TestCase(object):
         self.assert_function = assert_function
 
     def evaluate(self, function):
+        """
+        Evaluate the function with the assert_function using the input and output.
+        :param function: function to be evaluated
+        :return: the output of the assert_function
+        """
         if isinstance(self.input, dict):
             try:
                 evaluation = self.assert_function(function(**self.input), self.output)
@@ -82,19 +88,21 @@ class TestCase(object):
 class TestSet(object):
     """TestSet."""
 
-    def __init__(self, file_name=None, min_score=1.0):
+    def __init__(self, min_score=1.0):
         self.min_score = min_score
         self.test_cases = []
-
-        if file_name:
-            self.load(file_name)
+        self.__closed_tests = []
 
     def __getitem__(self, item):
         return self.test_cases[item]
 
     def __iter__(self):
-        for test in self.test_cases:
+        tests = self.test_cases
+        for test in tests:
             yield test
+
+    def closed_tests_count(self):
+        return len(self.__closed_tests)
 
     def evaluate(self, function, catch_exceptions=False):
         """
@@ -105,7 +113,7 @@ class TestSet(object):
         :return: list with the evaluated results for each test case
         """
         results = []
-        for test in self:
+        for test in self.test_cases + self.__closed_tests:
             if catch_exceptions:
                 try:
                     score = test.evaluate(function)
@@ -124,7 +132,7 @@ class TestSet(object):
         :return: list containing dict with the values of execution. list[dict, dict...]
         """
         performances = []
-        for test in self:
+        for test in self.test_cases + self.__closed_tests:
             try:
                 performances.append(test.performance(function, runs))
             except Exception as err:
@@ -132,22 +140,33 @@ class TestSet(object):
                 warnings.warn('Error during test execution: {0}'.format(err))
         return performances
 
-    def add_new_test_case(self, test_case):
-        self.test_cases.append(test_case)
+    def add_test(self, _input, _output, assert_function):
+        self.test_cases.append(TestCase(_input, _output, assert_function))
 
-    def load(self, file_name):
-        if '.' not in file_name:
-            file_name += '.test'
-
-        with open(file_name, 'rb') as file:
-            self.test_cases = pickle.load(file)
+    def add_closed_test(self, _input, _output, assert_function):
+        self.__closed_tests.append(TestCase(_input, _output, assert_function))
 
     def save(self, file_name):
         if '.' not in file_name:
-            file_name += '.test'
+            file_name += '.{}'.format(TESTSET_EXT)
 
         with open(file_name, 'wb') as file:
-            pickle.dump(self.test_cases, file)
+            pickle.dump([self.test_cases, self.__closed_tests], file)
+
+    def load(self, file_name):
+        if '.' not in file_name:
+            file_name += '.{}'.format(TESTSET_EXT)
+
+        with open(file_name, 'rb') as file:
+            ot, ct = pickle.load(file)
+            self.test_cases = ot
+            self.__closed_tests = ct
+
+
+def load_test_set(file_name):
+    ts = TestSet()
+    ts.load(file_name)
+    return ts
 
 
 def get_result_file_name(test_name, path='./'):

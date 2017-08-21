@@ -19,7 +19,7 @@ python setup.py install
  - Save the model.
  
  ```python
-from jn_tester.professor.models import TestCase, TestSet
+from jn_tester.professor.models import TestSet
 
 def equal(x, y):
     return 1.0 if x == y else 0.0
@@ -29,9 +29,9 @@ def double(b):
 
 # Simple test
 test = TestSet()
-test.add_new_test_case(TestCase(2, 4, assert_function=lambda x, y: 1.0 if x == y else 0.0))
-test.add_new_test_case(TestCase({'n': 6}, 12, assert_function=equal))
-test.add_new_test_case(TestCase({'n': 4}, 8, assert_function=equal))
+test.add_test(2, 4, assert_function=lambda x, y: 1.0 if x == y else 0.0)
+test.add_test({'n': 6}, 12, assert_function=equal)
+test.add_test({'n': 4}, 8, assert_function=equal)
 
 print('1:', test.evaluate(lambda n: 2**n), 'wrong')       # wrong
 print('2:', test.evaluate(double), 'correct')

@@ -6,7 +6,7 @@ import re
 import warnings
 from types import FunctionType
 
-from jn_tester.professor.models import TestSet, MalformedTestCase, ResultSet
+from jn_tester.professor.models import MalformedTestCase, ResultSet, load_test_set
 
 
 class Execution:
@@ -54,8 +54,7 @@ class Execution:
 
         self.__test_set_name = test_set_name
         self.__fnc = fnc
-        self.__test_set = TestSet()
-        self.__test_set.load(test_set_name)
+        self.__test_set = load_test_set(test_set_name)
 
     def exec_test(self):
         """Execute the Test itself."""
@@ -65,7 +64,7 @@ class Execution:
                 'performance': self.__test_set.performance(self.__fnc)
             }
         else:
-            raise Exception('Not test cases to execute in this test.')
+            raise Exception('No test cases to execute in this test.')
 
     def submit_test(self):
         """Execute the Test and return the results."""
@@ -101,7 +100,7 @@ class Execution:
             self.__data = _data
             return _data
         else:
-            raise Exception('Not test cases to execute in this test.')
+            raise Exception('No test cases to execute in this test.')
 
     def record_test_results(self, test_set_name):
         self.__load_username()
