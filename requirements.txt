@@ -1,5 +1,9 @@
-dill
-memory_profiler
-psutil
-numpy
-pandas
+dill==0.2.6
+jn-tester==0.2.0
+memory-profiler==0.47
+numpy==1.13.1
+pandas==0.20.3
+psutil==5.2.2
+python-dateutil==2.6.1
+pytz==2017.2
+six==1.10.0
