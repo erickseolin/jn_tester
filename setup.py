@@ -1,27 +1,31 @@
 from setuptools import setup
-import os.path
 
-__version__ = '0.1.0-Beta'
+__version__ = '0.2.0'
 
-descr_file = os.path.join(os.path.dirname(__file__), 'README.md')
+
+def readme():
+    with open('README.md') as f:
+        return f.read()
 
 setup(
     name='jn_tester',
     version=__version__,
-
+    description='Make tests and performance runs on python functions (for Jupyter Notebook).',
     packages=['jn_tester.professor', 'jn_tester.student'],
-
-    description='Library to make tests and performance runs on python functions.'
-                ' Visial interface for Jupyter Notebok',
-    long_description=open(descr_file).read(),
+    long_description=readme(),
     author='Erick, Rodolfo, Angel, Fabio',
     url='https://github.com/erickseolin/jn_tester/',
     classifiers=[
         'License :: OSI Approved :: MIT License',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-        'Topic :: Testing',
-        'Topic :: Jupiter Notebook',
+        'Development Status :: 4 - Beta',
+        'Intended Audience :: Education',
+        'Topic :: Utilities',
+        'Topic :: Software Development :: Testing',
+        'Framework :: IPython',
+        'Programming Language :: Python :: 3'
     ],
+    keywords='tests jupyter education',
+    license='MIT',
     install_requires=[
         'dill',
         'memory_profiler',
@@ -29,4 +33,5 @@ setup(
         'numpy',
         'pandas',
     ],
+    zip_safe=False,
 )
