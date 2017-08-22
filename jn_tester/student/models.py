@@ -6,7 +6,7 @@ import re
 import warnings
 from types import FunctionType
 
-from jn_tester.professor.models import TestSet, MalformedTestCase, Results
+from jn_tester.professor.models import MalformedTestCase, ResultSet, load_test_set
 
 
 class Execution:
@@ -54,8 +54,7 @@ class Execution:
 
         self.__test_set_name = test_set_name
         self.__fnc = fnc
-        self.__test_set = TestSet()
-        self.__test_set.load(test_set_name)
+        self.__test_set = load_test_set(test_set_name)
 
     def exec_test(self):
         """Execute the Test itself."""
@@ -65,7 +64,7 @@ class Execution:
                 'performance': self.__test_set.performance(self.__fnc)
             }
         else:
-            raise Exception('Not test cases to execute in this test.')
+            raise Exception('No test cases to execute in this test.')
 
     def submit_test(self):
         """Execute the Test and return the results."""
@@ -101,12 +100,14 @@ class Execution:
             self.__data = _data
             return _data
         else:
-            raise Exception('Not test cases to execute in this test.')
+            raise Exception('No test cases to execute in this test.')
 
     def record_test_results(self, test_set_name):
         self.__load_username()
         scores = self.__data.get('scores')
         # We are not sending memory usage yet to the professor results.
         times = [perf['time'] for perf in self.__data.get('performance')]
-        results = Results(self.__fnc.__name__, test_set_name, self.__username, scores=scores, times=times)
-        results.save('.{0}-{1}.score'.format(test_set_name, self.__username))
+        memory = [perf['memory'] for perf in self.__data.get('performance')]
+        results = ResultSet(test_set_name)
+        results.add_result(self.__username, self.__fnc.__name__, scores, times, memory=memory)
+        results.save()
