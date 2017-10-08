@@ -7,7 +7,7 @@ from IPython.display import display
 class ViewPresenter:
     """Presentation class. It renders information about the results returned by tests."""
 
-    def __init__(self, data, presentation_mode='text'):
+    def __init__(self, data, presentation_mode='table'):
         if type(data) is not dict:
             raise Exception("Presenter data must be a dictionary.")
         if presentation_mode not in ['text', 'table']:

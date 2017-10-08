@@ -20,7 +20,7 @@ def run_test(test_set_name, fnc=None, presentation_format='table'):
     return _data
 
 
-def submit_test(test_set_name, fnc=None, presentation_format='text'):
+def submit_test(test_set_name, fnc=None, presentation_format='table'):
     """"""
     if execution.already_loaded(test_set_name, fnc):
         execution.load(test_set_name, fnc)

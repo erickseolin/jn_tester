@@ -99,5 +99,5 @@ submit_test('double', fnc=my_double, presentation_mode='table')
 
  export_complete_table('double', base_path, sort_by=sort)
  export_complete_table('double', base_path, export_format='pkl')
- export_complete_table('double', base_path, export_format='html') 
+ export_complete_table('double', base_path, export_format='html')
  ```
