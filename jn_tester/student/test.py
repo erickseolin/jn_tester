@@ -8,11 +8,16 @@ from .presentation import ViewPresenter
 execution = Execution()
 
 
-def run_test(test_set_name, fnc=None):
+def run_test(test_set_name, fnc=None, presentation_format='table'):
     """"""
     if execution.already_loaded(test_set_name, fnc):
         execution.load(test_set_name, fnc)
-    return execution.exec_test()
+    # Get the data
+    _data = execution.exec_test()
+    # Present the data for the student
+    presenter = ViewPresenter(_data, presentation_mode=presentation_format)
+    presenter.show()
+    return _data
 
 
 def submit_test(test_set_name, fnc=None, presentation_format='text'):

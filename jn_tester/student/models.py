@@ -59,10 +59,7 @@ class Execution:
     def exec_test(self):
         """Execute the Test itself."""
         if len(self.__test_set.test_cases) > 0:
-            return {
-                'results': self.__test_set.evaluate(self.__fnc),
-                'performance': self.__test_set.performance(self.__fnc)
-            }
+            return self.submit_test()
         else:
             raise Exception('No test cases to execute in this test.')
 
