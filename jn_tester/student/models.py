@@ -105,6 +105,11 @@ class Execution:
         # We are not sending memory usage yet to the professor results.
         times = [perf['time'] for perf in self.__data.get('performance')]
         memory = [perf['memory'] for perf in self.__data.get('performance')]
-        results = ResultSet(test_set_name)
+        # Get the correct path from where the test is being run...
+        path = os.getcwd()
+        # let's get only the file name... if we have some dir in between
+        filename = test_set_name.split('/')[-1]
+        # Record the test
+        results = ResultSet('%s/%s' % (path, filename))
         results.add_result(self.__username, self.__fnc.__name__, scores, times, memory=memory)
         results.save()
