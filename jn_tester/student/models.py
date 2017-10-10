@@ -5,6 +5,7 @@ import os
 import re
 import warnings
 from types import FunctionType
+from datetime import datetime
 
 from jn_tester.professor.models import MalformedTestCase, ResultSet, load_test_set
 
@@ -69,8 +70,13 @@ class Execution:
             results = self.__test_set.evaluate(self.__fnc)
             score = sum(results) / float(len(results))
 
+            # Timezone problem?
+            # datetime.now(pytz.timezone('America/Sao_Paulo'))
+            date = datetime.now().strftime("%d/%m/%Y %H:%M")
+
             _data = {
                 'success': False,
+                'date': date,
                 'function': self.__fnc.__name__,
                 'final_score': 0.,
                 'results': [],
@@ -102,7 +108,7 @@ class Execution:
     def record_test_results(self, test_set_name):
         self.__load_username()
         scores = self.__data.get('scores')
-        # We are not sending memory usage yet to the professor results.
+        date = self.__data.get('date')
         times = [perf['time'] for perf in self.__data.get('performance')]
         memory = [perf['memory'] for perf in self.__data.get('performance')]
         # Get the correct path from where the test is being run...
@@ -111,5 +117,5 @@ class Execution:
         filename = test_set_name.split('/')[-1]
         # Record the test
         results = ResultSet('%s/%s' % (path, filename))
-        results.add_result(self.__username, self.__fnc.__name__, scores, times, memory=memory)
+        results.add_result(self.__username, self.__fnc.__name__, scores, times, memory=memory, date=date)
         results.save()

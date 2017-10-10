@@ -54,22 +54,22 @@ class CommonPresenter:
 
             # Transform into list with order: ranking, funcname, user, Test[i] Score, Test[i] Time, Mean Time, Final score
             ## Generate column headers:
-            columns_headers = ['Function Ranking', 'Function', 'Author', 'Mean Time (ms)', 'Final Score']
+            columns_headers = ['Function Ranking', 'Function', 'Author', 'Date', 'Mean Time (ms)', 'Final Score']
             N = len(results[0]['scores']) + 1
             test_headers = list(
                 chain.from_iterable(('Test {}: Score'.format(i), 'Test {}: Time (ms)'.format(i)) for i in range(1, N)))
-            columns_headers[3:3] = test_headers
+            columns_headers[4:4] = test_headers
 
             ## Transform the data
             results_list = []
             rlappend = results_list.append  # faster way to add items to a list
             for rank, r in enumerate(results):
-                rlist = list([rank + 1, r['function'], r['user'], '{0:.3f}'.format(r['mean_time']),
+                rlist = list([rank + 1, r['function'], r['user'], r['date'], '{0:.3f}'.format(r['mean_time']),
                               '{0:.2f}'.format(r['final_score'])])
                 tests_score_time = list(chain.from_iterable(
                     ('{0:.2f}'.format(r['scores'][i]), '{0:.3f}'.format(r['times'][i])) for i in
                     range(len(r['scores']))))
-                rlist[3:3] = tests_score_time
+                rlist[4:4] = tests_score_time
                 rlappend(rlist)
             return results_list, columns_headers
         return None
@@ -86,6 +86,8 @@ class CommonPresenter:
             for _s in _sort:
                 if _s == 'rank':
                     self.__sort_by.append('Function Ranking')
+                elif _s == 'date':
+                    self.__sort_by.append('Date')
                 elif _s == 'author':
                     self.__sort_by.append('Author')
                 elif _s == 'time':
@@ -124,7 +126,7 @@ class ExportPresenter(CommonPresenter):
                 filename = '{0}.csv'.format(filename)
                 df.to_csv(filename, sep=';', encoding='utf-8')
         else:
-            print("Not data could be export... please visualize the DataFrame to see if results are ok.")
+            print("No data could be export... please visualize the DataFrame to see if results are ok.")
 
 
 class ViewPresenter(CommonPresenter):

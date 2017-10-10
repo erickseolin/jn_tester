@@ -10,6 +10,7 @@
 from argparse import ArgumentParser
 import os
 import random
+from datetime import datetime
 try:
     import dill as pickle
 except:
@@ -48,10 +49,12 @@ for student in students:
         if i > 0 and skip:
             if random.random() > 0.5:
                 continue
-            
+
+        date = datetime.now().strftime("%d/%m/%Y %H:%M")
         fake_data = {
             'user': student,
             'function': '{}_fnc_{}'.format(test_name, int(random.random()*10)),
+            'date': date,
         }
 
         scores = []
